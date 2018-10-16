@@ -21,17 +21,61 @@ function getLevelDBData(key){
   })
 }
 
-// as a promise
+// Function rewritten as a promise.
+// Use this method when we need to bring a specific block!
 /*
 function getLevelDBData(key){
 	return new Promise((resolve, reject) => {
-	  db.get(key, function(err, value) {
-		if (err) return console.log('Not found!', err);
-		console.log('Value = ' + value);
-	  })	
-	});	
-}) */
+		db.get(key, function(err, value) {
+			if (err) {
+				reject('Not found!', err);
+			} else {
+				resolve(value);
+			}		
+		});
+	})
+} */
 
+
+//Get length of database
+function getLengthOfLevelDB() {
+	let array = [];
+	db.createKeyStream()
+	  .on('data', function (data) {
+		array.push(data);
+	}).on('end', () => {
+		console.log(array.length - 1);
+	});
+}
+
+//Get length of database in promise format!
+function getLengthOfLevelDB() {
+	return new Promise((resolve, reject) => {
+		let array = [];
+		db.createKeyStream()
+		  .on('data', function (data) {
+			array.push(data);
+		}).on('error', function (err) {
+			reject(err);
+		})	
+		.on('end', () => {
+			resolve(array.length - 1);
+		});				
+	});
+}
+
+/* Testing to see how i is incremented...
+function curiousTest() {
+	let i = 0;
+	db.createReadStream().on('data', function(data) {
+		console.log(data);
+		i++;
+		console.log(i);
+	}).on('close', function() {
+          console.log(i);
+    });
+}
+*/
 
 // Add data to levelDB with value
 function addDataToLevelDB(value) {
