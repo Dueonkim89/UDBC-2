@@ -1,0 +1,17 @@
+{
+  "name": "udbc-2",
+  "version": "1.0.0",
+  "description": "Udacity Blockchain Second Project",
+  "main": "levelSandbox.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blockchain"
+  ],
+  "author": "Dkim",
+  "license": "ISC",
+  "dependencies": {
+    "level": "^4.0.0"
+  }
+}
