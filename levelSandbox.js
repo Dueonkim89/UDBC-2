@@ -63,9 +63,9 @@ function getLevelDB() {
 			reject(err);
 		})	
 		.on('end', () => {
-		array.sort( (a,b) => {
+		array.sort((a,b) => {
 			return parseInt(a.key) - parseInt(b.key);
-		});				
+		})			
 		resolve(array);
 		});				
 	});
@@ -118,9 +118,7 @@ function curiousTest() {
 }
 */
 
-
-
-
 module.exports = {
-	getLevelDB
+	getLevelDB,
+	addDataToLevelDB
 }
