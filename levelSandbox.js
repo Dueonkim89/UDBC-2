@@ -36,46 +36,42 @@ function getLevelDBData(key){
 	})
 } */
 
-
-//Get length of database
-function getLengthOfLevelDB() {
+/*
+//Get all data within LevelDB
+function getLevelDB() {
 	let array = [];
-	db.createKeyStream()
+	db.createReadStream()
 	  .on('data', function (data) {
 		array.push(data);
 	}).on('end', () => {
-		console.log(array.length - 1);
+	// To sort the array in valid order.
+	array.sort( (a,b) => {
+		return parseInt(a.key) - parseInt(b.key);
+	});		
+	console.log(array);
 	});
-}
+}*/
 
-//Get length of database in promise format!
-function getLengthOfLevelDB() {
+//Get data in a promise!
+function getLevelDB() {
 	return new Promise((resolve, reject) => {
 		let array = [];
-		db.createKeyStream()
+		db.createReadStream()
 		  .on('data', function (data) {
 			array.push(data);
 		}).on('error', function (err) {
 			reject(err);
 		})	
 		.on('end', () => {
-			resolve(array.length - 1);
+		array.sort( (a,b) => {
+			return parseInt(a.key) - parseInt(b.key);
+		});				
+		resolve(array);
 		});				
 	});
 }
 
-/* Testing to see how i is incremented...
-function curiousTest() {
-	let i = 0;
-	db.createReadStream().on('data', function(data) {
-		console.log(data);
-		i++;
-		console.log(i);
-	}).on('close', function() {
-          console.log(i);
-    });
-}
-*/
+
 
 // Add data to levelDB with value
 function addDataToLevelDB(value) {
@@ -101,10 +97,30 @@ function addDataToLevelDB(value) {
 |     ( new block every 10 minutes )                                           |
 |  ===========================================================================*/
 
-
+/*
 (function theLoop (i) {
   setTimeout(function () {
     addDataToLevelDB('Testing data');
     if (--i) theLoop(i);
   }, 100);
 })(10);
+
+Testing to see how i is incremented...
+function curiousTest() {
+	let i = 0;
+	db.createReadStream().on('data', function(data) {
+		console.log(data);
+		i++;
+		console.log(i);
+	}).on('close', function() {
+          console.log(i);
+    });
+}
+*/
+
+
+
+
+module.exports = {
+	getLevelDB
+}
