@@ -3,7 +3,7 @@
 |  =========================================================*/
 
 const SHA256 = require('crypto-js/sha256');
-const { getLevelDB, addDataToLevelDB } = require('./levelSandbox');
+const { getLevelDB, addDataToLevelDB, getLevelDBData } = require('./levelSandbox');
 
 /* ===== Block Class ==============================
 |  Class with a constructor for block 			   |
@@ -26,13 +26,21 @@ class Block{
 class Blockchain{
   constructor(){
 	//use arrow func so we dont have to worry about 'this' binding to the callback func!
-    this.chain = getLevelDB().then( dataset => {
+    this.chain = getLevelDB().then(dataSet => {
 		//map the array to remove the key before we add as the chain.
-		this.chain = dataset.map(x => x.value);
-		if (!this.chain.length) {
-			this.addBlock(new Block("First block in the chain - Genesis block"));
+		// Parse each index within array.
+		this.chain = dataSet.map(block => JSON.parse(block.value));
+		if (!dataSet.length) {
+			this.createGenesisBlock();
 		}		
+	}).catch(error => {
+	  console.log('Unable to load levelDB. Make sure you installed the level module');
 	});	
+  }
+  
+  //create genesis block
+  createGenesisBlock() {
+	this.addBlock(new Block("First block in the chain - Genesis block"));  
   }
   
   // Add new block
@@ -53,18 +61,24 @@ class Blockchain{
 	addDataToLevelDB(JSON.stringify(newBlock));
   }
   
-/* 
-  // Get block height
+	// Get block height
     getBlockHeight(){
-      return this.chain.length-1;
+		getLevelDB().then(dataSet => {
+			console.log(dataSet.length - 1);
+		}).catch(error => {
+			console.log('Unable to obtain block height');
+		});
     }
 
     // get block
     getBlock(blockHeight){
-      // return object as a single string
-      return JSON.parse(JSON.stringify(this.chain[blockHeight]));
+		getLevelDBData(blockHeight).then(block => {
+			console.log(JSON.parse(block));	
+		}).catch(error => {
+			console.log('Unable to obtain block');
+		});			
     }
-
+/*
     // validate block
     validateBlock(blockHeight){
       // get block object

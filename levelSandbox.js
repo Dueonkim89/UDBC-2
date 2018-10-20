@@ -15,16 +15,6 @@ function addLevelDBData(key,value){
 
 // Get data from levelDB with key
 function getLevelDBData(key){
-  db.get(key, function(err, value) {
-    if (err) return console.log('Not found!', err);
-    console.log('Value = ' + value);
-  })
-}
-
-// Function rewritten as a promise.
-// Use this method when we need to bring a specific block!
-/*
-function getLevelDBData(key){
 	return new Promise((resolve, reject) => {
 		db.get(key, function(err, value) {
 			if (err) {
@@ -34,9 +24,17 @@ function getLevelDBData(key){
 			}		
 		});
 	})
-} */
+} 
 
 /*
+// Use this method when we need to bring a specific block!
+function getLevelDBData(key){
+  db.get(key, function(err, value) {
+    if (err) return console.log('Not found!', err);
+    console.log('Value = ' + value);
+  })
+}
+
 //Get all data within LevelDB
 function getLevelDB() {
 	let array = [];
@@ -63,15 +61,13 @@ function getLevelDB() {
 			reject(err);
 		})	
 		.on('end', () => {
-		array.sort((a,b) => {
-			return parseInt(a.key) - parseInt(b.key);
-		})			
-		resolve(array);
+			array.sort((a,b) => {
+				return parseInt(a.key) - parseInt(b.key);
+			})			
+			resolve(array);
 		});				
 	});
 }
-
-
 
 // Add data to levelDB with value
 function addDataToLevelDB(value) {
@@ -120,5 +116,6 @@ function curiousTest() {
 
 module.exports = {
 	getLevelDB,
-	addDataToLevelDB
+	addDataToLevelDB,
+	getLevelDBData
 }
