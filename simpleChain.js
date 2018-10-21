@@ -29,7 +29,7 @@ class Blockchain{
     this.chain = getLevelDB().then(dataSet => {
 		//map the array to remove the key before we add as the chain.
 		// Parse each index within array.
-		this.chain = dataSet.map(block => JSON.parse(block.value));
+		this.chain = dataSet.map(eachBlock => JSON.parse(eachBlock.value));
 		if (!dataSet.length) {
 			this.createGenesisBlock();
 		}		
@@ -73,31 +73,35 @@ class Blockchain{
     // get block
     getBlock(blockHeight){
 		getLevelDBData(blockHeight).then(block => {
-			console.log(JSON.parse(block));	
+			let parsedBlock = JSON.parse(block);
+			console.log(parsedBlock);	
 		}).catch(error => {
-			console.log('Unable to obtain block');
+			console.log(`Unable to obtain block #${blockHeight}`);
 		});			
     }
-/*
+
     // validate block
     validateBlock(blockHeight){
-      // get block object
-      let block = this.getBlock(blockHeight);
-      // get block hash
-      let blockHash = block.hash;
-      // remove block hash to test block integrity
-      block.hash = '';
-      // generate block hash
-      let validBlockHash = SHA256(JSON.stringify(block)).toString();
-      // Compare
-      if (blockHash===validBlockHash) {
-          return true;
-        } else {
-          console.log('Block #'+blockHeight+' invalid hash:\n'+blockHash+'<>'+validBlockHash);
-          return false;
-        }
+      // invoke getBlock(bHeight)
+      getLevelDBData(blockHeight).then(block => {
+		let parsedBlock = JSON.parse(block);
+		// get block hash
+		let blockHash = parsedBlock.hash;	  
+		// remove block hash to test block integrity
+		parsedBlock.hash = '';
+		// generate block hash
+		let validBlockHash = SHA256(JSON.stringify(parsedBlock)).toString();
+		// Compare
+		if (blockHash===validBlockHash) {
+			console.log(`Block #${blockHeight} is valid`);
+		} else {
+			console.log('Block #'+blockHeight+' invalid hash:\n'+blockHash+'<>'+validBlockHash);
+		}				
+	  }).catch(error => {
+			console.log(`Block #${blockHeight} does not exist.`);
+	  });
     }
-
+/*
    // Validate blockchain
     validateChain(){
       let errorLog = [];
