@@ -63,8 +63,8 @@ function getLevelDB() {
 		  .on('end', () => {
 			array.sort((a,b) => {
 				return parseInt(a.key) - parseInt(b.key);
-			})			
-			resolve(array);
+			})
+			resolve(array.map(eachBlock => eachBlock.value));
 		  });				
 	});
 }
@@ -96,7 +96,7 @@ function addDataToLevelDB(value) {
 /*
 (function theLoop (i) {
   setTimeout(function () {
-    addDataToLevelDB('Testing data');
+    addDataToLevelDB('Testing data ' + i);
     if (--i) theLoop(i);
   }, 100);
 })(10);

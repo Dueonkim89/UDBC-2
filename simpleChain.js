@@ -27,12 +27,14 @@ class Blockchain{
   constructor(){
 	//use arrow func so we dont have to worry about 'this' binding to the callback func!
     this.chain = getLevelDB().then(dataSet => {
-		//map the array to remove the key before we add as the chain.
-		// Parse each index within array.
-		this.chain = dataSet.map(eachBlock => JSON.parse(eachBlock.value));
+		//if levelDB is empty
 		if (!dataSet.length) {
+			this.chain = [];
 			this.createGenesisBlock();
-		}		
+		} else {
+		// JSON parse each index within array.
+		this.chain = dataSet.map(eachBlock => JSON.parse(eachBlock));
+		}	
 	}).catch(error => {
 	  console.log('Unable to load levelDB. Make sure you installed the level module');
 	});	
@@ -122,13 +124,22 @@ class Blockchain{
 			});				
 		}
     }
-
+	/*
    // Validate blockchain
     validateChain(){
 		//getlevelDB
 		//map thru array, for each index pass validBlock.
 		
       let errorLog = [];
+	  getLevelDB().then(dataSet => {
+			
+			this.validateBlock(blockHeight, chain=null)  
+	  });
+	  
+	  
+	  
+	  
+	  
       for (var i = 0; i < this.chain.length-1; i++) {
         // validate block
         if (!this.validateBlock(i))errorLog.push(i);
@@ -145,7 +156,7 @@ class Blockchain{
       } else {
         console.log('No errors detected');
       }
-    }
+    }*/
 }
 
 module.exports = {
