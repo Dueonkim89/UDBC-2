@@ -1,4 +1,5 @@
 const { getLevelDBData, addLevelDBData } = require('./levelSandbox');
+const { Block, Blockchain } = require('./simpleChain');
 
 
 //update data for future testing purposes
@@ -11,3 +12,17 @@ function modifyData(key, value) {
 		console.log(`Unable to change data for block #${key}`);
 	});	
 }
+
+//create new instance of blockchain
+const myBlockChain = new Blockchain();
+
+(function theLoop (i) {
+    setTimeout(function () {
+        let blockTest = new Block("Test Block - " + (i + 1));
+        myBlockChain.addBlock(blockTest).then((result) => {
+            console.log(result);
+            i++;
+            if (i < 10) theLoop(i);
+        });
+    }, 10000);
+  })(0);

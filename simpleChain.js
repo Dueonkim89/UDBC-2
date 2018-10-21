@@ -3,7 +3,7 @@
 |  =========================================================*/
 
 const SHA256 = require('crypto-js/sha256');
-const { getLevelDB, addDataToLevelDB, getLevelDBData, modifyDataForTesting } = require('./levelSandbox');
+const { getLevelDB, addDataToLevelDB, getLevelDBData } = require('./levelSandbox');
 
 /* ===== Block Class ==============================
 |  Class with a constructor for block 			   |
@@ -81,29 +81,53 @@ class Blockchain{
     }
 
     // validate block
-    validateBlock(blockHeight){
-      // invoke getBlock(bHeight)
-      getLevelDBData(blockHeight).then(block => {
-		let parsedBlock = JSON.parse(block);
-		// get block hash
-		let blockHash = parsedBlock.hash;	  
-		// remove block hash to test block integrity
-		parsedBlock.hash = '';
-		// generate block hash
-		let validBlockHash = SHA256(JSON.stringify(parsedBlock)).toString();
-		// Compare
-		if (blockHash===validBlockHash) {
-			console.log(`Block #${blockHeight} is valid`);
+    validateBlock(blockHeight, chain=null){
+		//if validating chain, return a promise
+		if (chain) {
+		  return getLevelDBData(blockHeight).then(block => {
+			let parsedBlock = JSON.parse(block);
+			// get block hash
+			let blockHash = parsedBlock.hash;	  
+			// remove block hash to test block integrity
+			parsedBlock.hash = '';
+			// generate block hash
+			let validBlockHash = SHA256(JSON.stringify(parsedBlock)).toString();
+			// Compare
+			if (blockHash===validBlockHash) {
+				return Promise.resolve(true);
+			} else {
+				return Promise.resolve(false);
+			}				
+		  }).catch(error => {
+				return Promise.reject(`Block #${blockHeight} does not exist.`);
+		  });	
+		  //if only validating a block. dont return a promise.
 		} else {
-			console.log('Block #'+blockHeight+' invalid hash:\n'+blockHash+'<>'+validBlockHash);
-		}				
-	  }).catch(error => {
-			console.log(`Block #${blockHeight} does not exist.`);
-	  });
+			getLevelDBData(blockHeight).then(block => {
+				let parsedBlock = JSON.parse(block);
+				// get block hash
+				let blockHash = parsedBlock.hash;	  
+				// remove block hash to test block integrity
+				parsedBlock.hash = '';
+				// generate block hash
+				let validBlockHash = SHA256(JSON.stringify(parsedBlock)).toString();
+				// Compare
+				if (blockHash===validBlockHash) {
+					console.log(`Block #${blockHeight} is valid`);
+				} else {
+					console.log('Block #'+blockHeight+' invalid hash:\n'+blockHash+'<>'+validBlockHash);
+				}				
+			}).catch(error => {
+				console.log(`Block #${blockHeight} does not exist.`);
+			});				
+		}
     }
-/*
+
    // Validate blockchain
     validateChain(){
+		//getlevelDB
+		//map thru array, for each index pass validBlock.
+		
       let errorLog = [];
       for (var i = 0; i < this.chain.length-1; i++) {
         // validate block
@@ -121,5 +145,10 @@ class Blockchain{
       } else {
         console.log('No errors detected');
       }
-    }*/
+    }
+}
+
+module.exports = {
+	Blockchain,
+	Block
 }

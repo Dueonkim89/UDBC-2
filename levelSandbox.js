@@ -57,15 +57,15 @@ function getLevelDB() {
 		db.createReadStream()
 		  .on('data', function (data) {
 			array.push(data);
-		}).on('error', function (err) {
+		  }).on('error', function (err) {
 			reject(err);
-		})	
-		.on('end', () => {
+		  })	
+		  .on('end', () => {
 			array.sort((a,b) => {
 				return parseInt(a.key) - parseInt(b.key);
 			})			
 			resolve(array);
-		});				
+		  });				
 	});
 }
 
