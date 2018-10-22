@@ -122,7 +122,6 @@ class Blockchain{
 		//getlevelDB
 		getLevelDB().then(dataSet => {
 			let parsedDataSet = dataSet.map(eachBlock => JSON.parse(eachBlock));
-			console.log(parsedDataSet);
 			//iterate thru array, for each index pass validBlock function.
 			for (let i = 0; i<parsedDataSet.length; i++) {
 				this.validateBlock(i, 'chain').then(valid => {
@@ -140,7 +139,7 @@ class Blockchain{
 					if (i === parsedDataSet.length-1 && errorLog.length>0) {
 						console.log(`Blockchain is invalid. These blocks were mutated: ${errorLog}`);
 					} else if (i === parsedDataSet.length-1 && !errorLog.length) {
-						console.log('No errors detected');
+						console.log('Blockchain is valid. No mutations detected');
 					}		
 				}).catch(error => console.log(error));				
 			}
