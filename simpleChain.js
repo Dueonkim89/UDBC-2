@@ -35,9 +35,7 @@ class Blockchain{
 		// JSON parse each index within array.
 		this.chain = dataSet.map(eachBlock => JSON.parse(eachBlock));
 		}	
-	}).catch(error => {
-	  console.log('Unable to load levelDB. Make sure you installed the level module');
-	});	
+	}).catch(error => console.log('Unable to load levelDB. Make sure you installed the level module'));	
   }
   
   //create genesis block
@@ -67,9 +65,7 @@ class Blockchain{
     getBlockHeight(){
 		getLevelDB().then(dataSet => {
 			console.log(dataSet.length - 1);
-		}).catch(error => {
-			console.log('Unable to obtain block height');
-		});
+		}).catch(error => console.log('Unable to obtain block height'));
     }
 
     // get block
@@ -77,9 +73,7 @@ class Blockchain{
 		getLevelDBData(blockHeight).then(block => {
 			let parsedBlock = JSON.parse(block);
 			console.log(parsedBlock);	
-		}).catch(error => {
-			console.log(`Unable to obtain block #${blockHeight}`);
-		});			
+		}).catch(error => console.log(`Unable to obtain block #${blockHeight}`));			
     }
 
     // validate block
@@ -100,9 +94,7 @@ class Blockchain{
 			} else {
 				return Promise.resolve(false);
 			}				
-		  }).catch(error => {
-				return Promise.reject(`Block #${blockHeight} does not exist.`);
-		  });	
+		  }).catch(error => Promise.reject(`Block #${blockHeight} does not exist.`));	
 		  //if only validating a block. dont return a promise.
 		} else {
 			getLevelDBData(blockHeight).then(block => {
@@ -119,44 +111,41 @@ class Blockchain{
 				} else {
 					console.log('Block #'+blockHeight+' invalid hash:\n'+blockHash+'<>'+validBlockHash);
 				}				
-			}).catch(error => {
-				console.log(`Block #${blockHeight} does not exist.`);
-			});				
+			}).catch(error => console.log(`Block #${blockHeight} does not exist.`));				
 		}
     }
-	/*
+	
    // Validate blockchain
-    validateChain(){
+    validateChain(){				
+		let errorLog = [];
+		let previousHash = null;
 		//getlevelDB
-		//map thru array, for each index pass validBlock.
-		
-      let errorLog = [];
-	  getLevelDB().then(dataSet => {
-			
-			this.validateBlock(blockHeight, chain=null)  
-	  });
-	  
-	  
-	  
-	  
-	  
-      for (var i = 0; i < this.chain.length-1; i++) {
-        // validate block
-        if (!this.validateBlock(i))errorLog.push(i);
-        // compare blocks hash link
-        let blockHash = this.chain[i].hash;
-        let previousHash = this.chain[i+1].previousBlockHash;
-        if (blockHash!==previousHash) {
-          errorLog.push(i);
-        }
-      }
-      if (errorLog.length>0) {
-        console.log('Block errors = ' + errorLog.length);
-        console.log('Blocks: '+errorLog);
-      } else {
-        console.log('No errors detected');
-      }
-    }*/
+		getLevelDB().then(dataSet => {
+			let parsedDataSet = dataSet.map(eachBlock => JSON.parse(eachBlock));
+			console.log(parsedDataSet);
+			//iterate thru array, for each index pass validBlock function.
+			for (let i = 0; i<parsedDataSet.length; i++) {
+				this.validateBlock(i, 'chain').then(valid => {
+					if (!valid) {
+						errorLog.push(i);
+					}
+					let blockHash = parsedDataSet[i].hash;	
+					if (i < parsedDataSet.length-1) {
+						previousHash = parsedDataSet[i+1].previousBlockHash;
+					}						
+					if (previousHash && blockHash!==previousHash) {
+						errorLog.push(i);
+					}
+					previousHash = null;
+					if (i === parsedDataSet.length-1 && errorLog.length>0) {
+						console.log(`Blockchain is invalid. These blocks were mutated: ${errorLog}`);
+					} else if (i === parsedDataSet.length-1 && !errorLog.length) {
+						console.log('No errors detected');
+					}		
+				}).catch(error => console.log(error));				
+			}
+		});	   	  	  	  	  
+    }
 }
 
 module.exports = {
