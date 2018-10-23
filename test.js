@@ -1,5 +1,6 @@
 const { getLevelDBData, addLevelDBData } = require('./levelSandbox');
-const { Block, Blockchain } = require('./simpleChain');
+const { Blockchain } = require('./simpleChain');
+const { Block } = require('./simpleBlock');
 
 //update data for future testing purposes
 function modifyData(key, value) {

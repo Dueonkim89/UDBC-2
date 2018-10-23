@@ -4,20 +4,7 @@
 
 const SHA256 = require('crypto-js/sha256');
 const { getLevelDB, addDataToLevelDB, getLevelDBData } = require('./levelSandbox');
-
-/* ===== Block Class ==============================
-|  Class with a constructor for block 			   |
-|  ===============================================*/
-
-class Block{
-	constructor(data){
-     this.hash = "",
-     this.height = 0,
-     this.body = data,
-     this.time = 0,
-     this.previousBlockHash = ""
-    }
-}
+const { Block } = require('./simpleBlock');
 
 /* ===== Blockchain Class ==========================
 |  Class with a constructor for new blockchain 		|
@@ -148,6 +135,5 @@ class Blockchain{
 }
 
 module.exports = {
-	Blockchain,
-	Block
+	Blockchain
 }
