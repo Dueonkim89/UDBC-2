@@ -6,56 +6,66 @@ Blockchain has the potential to change the way that the world approaches data. D
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-### Prerequisites
+## Setup
 
-Installing Node and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
+Clone or download the repository
 
-### Configuring your project
-
-- Use NPM to initialize your project and create package.json to store project dependencies.
-```
-npm init
-```
-- Install crypto-js with --save flag to save dependency to our package.json file
-```
-npm install crypto-js --save
-```
-- Install level with --save flag
-```
-npm install level --save
-```
+Install dependencies
+- npm install
 
 ## Testing
 
 To test code:
-1: Open a command prompt or shell terminal after install node.js.
-2: Enter a node session, also known as REPL (Read-Evaluate-Print-Loop).
+
+1: Open a shell terminal and enter REPL. (Read-Evaluate-Print-Loop)
 ```
 node
 ```
-3: Copy and paste your code into your node session
-4: Instantiate blockchain with blockchain variable
+2: Load the test.js file inside the terminal.
 ```
-let blockchain = new Blockchain();
+.load test.js
 ```
-5: Generate 10 blocks using a for loop
+3: Test file will instantiate a blockchain by the variable myBlockChain and 10 Test blocks will automatically be generated.
+
+#### BlockChain Methods
+
+1: To add a block: addBlock(newBlock)
 ```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
-}
+This method MUST take a new instance of Block as the argument. 
+
+Example: myBlockChain.addBlock(new Block('this is the block body'));
 ```
-6: Validate blockchain
+2: Get block height: getBlockHeight()
 ```
-blockchain.validateChain();
+myBlockChain.getBlockHeight();
 ```
-7: Induce errors by changing block data
+3: Get a block: getBlock(blockHeight)
 ```
-let inducedErrorBlocks = [2,4,7];
-for (var i = 0; i < inducedErrorBlocks.length; i++) {
-  blockchain.chain[inducedErrorBlocks[i]].data='induced chain error';
-}
+This method will take the height of a specific block as the argument.
+
+myBlockChain.getBlock(blockHeight);
 ```
-8: Validate blockchain. The chain should now fail with blocks 2,4, and 7.
+4: Validate a block: validateBlock(blockHeight)
 ```
-blockchain.validateChain();
+This method will take the height of a specific block as the argument.
+
+myBlockChain.validateBlock(blockHeight);
 ```
+5: Validate the entire blockchain: validateChain()
+```
+myBlockChain.validateChain();
+```
+
+#### Mutate Block
+
+1: In addition to blockchain methods. This file comes with a function to mutate the body of the block.
+```
+This method will take the height of the block as the first argument and new value for the body of the block as the second argument.
+
+modifyData(blockHeight, value)
+
+Example: modifyData(4, 'changing the body of the fourth block'))
+```
+
+
+
