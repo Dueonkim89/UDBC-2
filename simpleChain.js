@@ -12,16 +12,11 @@ const { Block } = require('./simpleBlock');
 
 class Blockchain{
   constructor(){
-	//use arrow func so we dont have to worry about 'this' binding to the callback func!
-    this.chain = getLevelDB().then(dataSet => {
+    getLevelDB().then(dataSet => {
 		//if levelDB is empty
 		if (!dataSet.length) {
-			this.chain = [];
 			this.createGenesisBlock();
-		} else {
-		// JSON parse each index within array.
-		this.chain = dataSet.map(eachBlock => JSON.parse(eachBlock));
-		}	
+		} 	
 	}).catch(error => console.log('Unable to load levelDB. Make sure you installed the level module'));	
   }
   
@@ -32,20 +27,22 @@ class Blockchain{
   
   // Add new block
   addBlock(newBlock){
-    // Block height
-    newBlock.height = this.chain.length;
-    // UTC timestamp
-    newBlock.time = new Date().getTime().toString().slice(0,-3);
-    // previous block hash
-    if(this.chain.length>0){
-      newBlock.previousBlockHash = this.chain[this.chain.length-1].hash;
-    }
-    // Block hash with SHA256 using newBlock and converting to a string
-    newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
-    // Adding block object to chain
-  	this.chain.push(newBlock);
-	//persist the data to levelDB. NOTE: MUST BE STRINGIFIED FIRST SO WE CAN PARSE LATER!
-	addDataToLevelDB(JSON.stringify(newBlock));
+	getLevelDB().then(dataSet => {  
+		// Block height
+		newBlock.height = dataSet.length;
+		// UTC timestamp
+		newBlock.time = new Date().getTime().toString().slice(0,-3);
+		// previous block hash
+		if(dataSet.length>0){
+			//get previousblockHash
+			let previousBlock = JSON.parse(dataSet[dataSet.length-1]);
+			newBlock.previousBlockHash = previousBlock.hash;
+		}
+		// Block hash with SHA256 using newBlock and converting to a string
+		newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
+		//persist the data to levelDB. NOTE: MUST BE STRINGIFIED FIRST SO WE CAN PARSE LATER!
+		addDataToLevelDB(JSON.stringify(newBlock));
+	}).catch(error => console.log('Unable to load levelDB. Make sure you installed the level module'));			
   }
   
 	// Get block height
