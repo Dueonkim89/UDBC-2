@@ -37,23 +37,27 @@ Example: myBlockChain.addBlock(new Block('this is the block body'));
 ```
 2: Get block height: getBlockHeight()
 ```
-myBlockChain.getBlockHeight();
+This method will return a promise. 
+
+Example: myBlockChain.getBlockHeight().then(height => // whatever you want to do with the height );
 ```
 3: Get a block: getBlock(blockHeight)
 ```
-This method will take the height of a specific block as the argument.
+This method will take the height of a specific block as the argument and return a promise.
 
-myBlockChain.getBlock(blockHeight);
+Example:  myBlockChain.getBlock(5).then(block => {
+            // whatever you want to do with the block
+          }).catch(error => console.log(error));
 ```
 4: Validate a block: validateBlock(blockHeight)
 ```
 This method will take the height of a specific block as the argument.
 
-myBlockChain.validateBlock(blockHeight);
+Example: myBlockChain.validateBlock(7);
 ```
 5: Validate the entire blockchain: validateChain()
 ```
-myBlockChain.validateChain();
+Example: myBlockChain.validateChain();
 ```
 
 #### Mutate Block
