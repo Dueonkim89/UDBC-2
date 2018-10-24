@@ -42,22 +42,22 @@ class Blockchain{
 		newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
 		//persist the data to levelDB. NOTE: MUST BE STRINGIFIED FIRST SO WE CAN PARSE LATER!
 		addDataToLevelDB(JSON.stringify(newBlock));
-	}).catch(error => console.log('Unable to load levelDB. Make sure you installed the level module'));			
+	}).catch(error => console.log('Unable to add block.'));			
   }
   
 	// Get block height
     getBlockHeight(){
-		getLevelDB().then(dataSet => {
-			console.log(dataSet.length - 1);
-		}).catch(error => console.log('Unable to obtain block height'));
+		return getLevelDB().then(dataSet => {
+			return Promise.resolve(dataSet.length - 1);
+		}).catch(error => Promise.reject('Unable to obtain block height'));
     }
 
     // get block
     getBlock(blockHeight){
-		getLevelDBData(blockHeight).then(block => {
+		return getLevelDBData(blockHeight).then(block => {
 			let parsedBlock = JSON.parse(block);
-			console.log(parsedBlock);	
-		}).catch(error => console.log(`Unable to obtain block #${blockHeight}`));			
+			return Promise.resolve(parsedBlock);	
+		}).catch(error => Promise.reject(`Unable to obtain block #${blockHeight}`));			
     }
 
     // validate block
